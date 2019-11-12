@@ -1,0 +1,33 @@
+setenforce 0
+yum -y install httpd mod_ssl
+wget http://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
+rpm -Uvh mysql57-community-release-el7-9.noarch.rpm
+yum install mysql-server 
+mysql_secure_installation  
+yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+yum install yum-utils
+yum-config-manager --enable remi-php55
+yum-config-manager --enable remi-php56
+yum-config-manager --enable remi-php72
+yum install -y php php-mcrypt php-cli php-gd php-curl php-mysql php-ldap php-zip php-fileinfo
+yum install -y php-intl php-mbstring php-dom
+wget https://download.owncloud.org/community/owncloud-10.3.0.zip
+ yum -y install unzip
+unzip owncloud-10.2.0.zip
+cp -r * /var/www/
+chown apache:apache -R /var/www/
+vi  /etc/httpd/conf/httpd.conf (set DocumentRoot "/var/www")
+systemctl restart httpd
+systemctl stop firewalld
+systemctl disable firewalld
+yum install iptables-services
+systemctl enable iptables
+ nano /etc/sysconfig/iptables (-A INPUT -p tcp -m tcp --dport 80 -j ACCEPT)
+systemctl restart iptables
+nano /var/www/config/config.php 
+ 'trusted_domains' =>
+  array (
+    0 => '192.168.202.132', 'http://109.251.58.38',
+    1 => $_SERVER['HTTP_HOST'],
+  ),
